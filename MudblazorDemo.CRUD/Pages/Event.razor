@@ -1,0 +1,86 @@
+﻿@page "/event"
+
+@using MudblazorDemo.CRUD.Data
+@inject MudblazorDemo.CRUD.Services.IEventService eventService
+@inject MudBlazor.ISnackbar snackBar
+
+<MudCard Elevation="25">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">Add / Edit Event</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudTextField @bind-Value="eventz.Name" Label="Name" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
+        <MudTextField @bind-Value="eventz.SeatsAvailable" Label="Seats" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
+        <br />
+        <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="Save">Save User</MudButton>
+    </MudCardContent>
+</MudCard>
+<br />
+<MudTable Elevation="25" Items="GetEvents()" Filter="new Func<Data.Event, bool>(Search)" @bind-customer="eventz">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Customers</MudText>
+        <MudToolBarSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Search for Customers..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Seats Available</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="FirstName">@context.Name</MudTd>
+        <MudTd DataLabel="LastName">@context.SeatsAvailable</MudTd>
+        <MudTd DataLabel="">
+            <MudFab @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small" />
+            <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code{ private bool hover = false;
+    private string searchString = "";
+
+    private MudblazorDemo.CRUD.Data.Event eventz = new MudblazorDemo.CRUD.Data.Event();
+    private List<MudblazorDemo.CRUD.Data.Event> events = new List<MudblazorDemo.CRUD.Data.Event>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        events = eventService.GetEvents();
+        GetEvents();
+    }
+
+    private List<MudblazorDemo.CRUD.Data.Event> GetEvents()
+    {
+        events = eventService.GetEvents();
+        return events;
+    }
+    private bool Search(Data.Event customer)
+    {
+        if (string.IsNullOrWhiteSpace(searchString)) return true;
+        if (customer.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private void Save()
+    {
+        eventService.SaveEvent(eventz);
+        eventz = new Data.Event();
+        snackBar.Add("Customer Saved.", Severity.Success);
+        GetEvents();
+    }
+    private void Edit(int id)
+    {
+        eventz = events.FirstOrDefault(c => c.Id == id);
+    }
+    private void Delete(int id)
+    {
+        eventService.DeleteEvent(id);
+        snackBar.Add("Customer Deleted.", Severity.Success);
+        GetEvents();
+    } }
