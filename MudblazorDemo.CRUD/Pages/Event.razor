@@ -71,7 +71,7 @@
     {
         eventService.SaveEvent(eventz);
         eventz = new Data.Event();
-        snackBar.Add("Customer Saved.", Severity.Success);
+        snackBar.Add("Event Saved.", Severity.Success);
         GetEvents();
     }
     private void Edit(int id)
@@ -81,6 +81,6 @@
     private void Delete(int id)
     {
         eventService.DeleteEvent(id);
-        snackBar.Add("Customer Deleted.", Severity.Success);
+        snackBar.Add("Event Deleted.", Severity.Success);
         GetEvents();
     } }

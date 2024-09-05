@@ -37,6 +37,19 @@ namespace MudblazorDemo.CRUD.Services
             return _dbContext.Customers.ToList();
         }
 
+        public bool IsRegExist(string cellNumber)
+        {
+            var customer = _dbContext.Customers.FirstOrDefault(x => x.PhoneNumber == cellNumber);
+            if (customer != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public void SaveCustomer(Customer customer)
         {
             if (customer.Id == 0) _dbContext.Customers.Add(customer);

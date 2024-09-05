@@ -12,5 +12,6 @@ namespace MudblazorDemo.CRUD.Services
         Customer GetCustomerById(int id);
         void SaveCustomer(Customer customer);
         void DeleteCustomer(int id);
+        bool IsRegExist(string eventName);
     }
 }

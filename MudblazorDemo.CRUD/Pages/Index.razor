@@ -100,18 +100,29 @@
 
         try
         {
-            var eve = eventService.GetEvents().Where(x => x.Name == selectedItem).FirstOrDefault();
 
-            var e = eventService.GetEventById(eve.Id);
-            e.SeatsAvailable += -1;
+            var checkifregistrationexist = customerService.IsRegExist(customer.PhoneNumber);
 
-            eventService.UpdateEvent(e);
+            if(checkifregistrationexist == true)
+            {
+                snackBar.Add("User already Registered.", Severity.Error);
+            }
+            else
+            {
+                var eve = eventService.GetEvents().Where(x => x.Name == selectedItem).FirstOrDefault();
 
-            customer.Name = selectedItem;
-            customerService.SaveCustomer(customer);
-            customer = new Customer();
-            snackBar.Add("Customer Saved.", Severity.Success);
-            GetCustomers();
+                var e = eventService.GetEventById(eve.Id);
+                e.SeatsAvailable += -1;
+
+                eventService.UpdateEvent(e);
+
+                customer.Name = selectedItem;
+                customerService.SaveCustomer(customer);
+                customer = new Customer();
+                snackBar.Add("User Saved.", Severity.Success);
+                GetCustomers();
+            }
+
         }
         catch (Exception e)
         {
@@ -129,6 +140,6 @@
     private void Delete(int id)
     {
         customerService.DeleteCustomer(id);
-        snackBar.Add("Customer Deleted.", Severity.Success);
+        snackBar.Add("User Deleted.", Severity.Success);
         GetCustomers();
     } }
